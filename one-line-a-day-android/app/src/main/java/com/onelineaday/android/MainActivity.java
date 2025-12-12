@@ -63,36 +63,23 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            ApiClient.getService(this).saveEntry(new ApiService.EntryRequest(today.toString(), text))
-                    .enqueue(new Callback<ApiService.JournalEntry>() {
-                        @Override
-                        public void onResponse(Call<ApiService.JournalEntry> call,
-                                Response<ApiService.JournalEntry> response) {
-                            if (response.isSuccessful()) {
-                                com.google.android.material.snackbar.Snackbar.make(v, getString(R.string.saved_msg),
-                                        com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show();
-                                AnalyticsManager.logEvent(MainActivity.this, "entry_saved");
-                                fetchTimeline(); // Refresh to show current year entry if needed or just sync
-                            } else {
-                                com.google.android.material.snackbar.Snackbar
-                                        .make(v, getString(R.string.error_save_msg, response.message()),
-                                                com.google.android.material.snackbar.Snackbar.LENGTH_SHORT)
-                                        .show();
-                                AnalyticsManager.logEvent(MainActivity.this, "entry_save_failed",
-                                        java.util.Collections.singletonMap("error", response.message()));
-                            }
-                        }
+            repository.saveEntry(today.toString(), text, new JournalRepository.DataCallback<ApiService.JournalEntry>() {
+                @Override
+                public void onSuccess(ApiService.JournalEntry data) {
+                    com.google.android.material.snackbar.Snackbar.make(v, getString(R.string.saved_msg),
+                            com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show();
+                    AnalyticsManager.logEvent(MainActivity.this, "entry_saved");
+                    fetchTimeline();
+                }
 
-                        @Override
-                        public void onFailure(Call<ApiService.JournalEntry> call, Throwable t) {
-                            com.google.android.material.snackbar.Snackbar
-                                    .make(v, getString(R.string.network_error_msg, t.getMessage()),
-                                            com.google.android.material.snackbar.Snackbar.LENGTH_SHORT)
-                                    .show(); // Corrected misplaced line
-                            AnalyticsManager.logEvent(MainActivity.this, "entry_save_error",
-                                    java.util.Collections.singletonMap("error", t.getMessage()));
-                        }
-                    });
+                @Override
+                public void onError(String message) {
+                    com.google.android.material.snackbar.Snackbar.make(v, message,
+                            com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show();
+                    AnalyticsManager.logEvent(MainActivity.this, "entry_save_failed",
+                            java.util.Collections.singletonMap("error", message));
+                }
+            });
         });
 
         // Navigation
@@ -200,10 +187,7 @@ public class MainActivity extends AppCompatActivity {
             showSearchDialog();
             return true;
         } else if (id == R.id.action_stats) {
-            // startActivity(new Intent(this, StatsActivity.class));
-            // StatsActivity not created yet in this session, assume placeholder or TODO
-            com.google.android.material.snackbar.Snackbar.make(findViewById(android.R.id.content),
-                    "Stats coming soon!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show();
+            startActivity(new Intent(this, StatsActivity.class));
             return true;
         } else if (id == R.id.action_logout) {
             SecurePrefs.get(this).edit().clear().apply();
