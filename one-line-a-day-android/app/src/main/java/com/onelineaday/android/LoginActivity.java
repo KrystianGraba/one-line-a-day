@@ -18,7 +18,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Auto-login check with Biometric
-        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences prefs = SecurePrefs.get(this);
         if (prefs.getString("token", null) != null) {
             checkBiometric(prefs);
             // Don't auto-finish here, wait for biometric result
@@ -67,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences prefs = SecurePrefs.get(this);
         // Copy of original onCreate logic
 
         com.google.android.material.textfield.TextInputEditText etEmail = findViewById(R.id.etEmail);

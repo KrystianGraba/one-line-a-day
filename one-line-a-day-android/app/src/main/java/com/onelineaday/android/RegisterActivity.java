@@ -53,7 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 // So we can auto-login!
 
                                 if (response.body() != null && response.body().token != null) {
-                                    getSharedPreferences("prefs", MODE_PRIVATE).edit()
+                                    SecurePrefs.get(RegisterActivity.this).edit()
                                             .putString("token", response.body().token).apply();
                                     startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                                     finishAffinity(); // Close Auth stack

@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                     "Stats coming soon!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_logout) {
-            getSharedPreferences("prefs", MODE_PRIVATE).edit().clear().apply();
+            SecurePrefs.get(this).edit().clear().apply();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return true;

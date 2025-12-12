@@ -37,7 +37,7 @@ public class JournalRepository {
     }
 
     public void getTimeline(String date, DataCallback<List<ApiService.JournalEntry>> callback) {
-        // Strategy: Network First -> Fallback to Local
+        // Strategy: Network First -> Fallback to Local + Prefetch Neighbors
         apiService.getTimeline(date).enqueue(new Callback<List<ApiService.JournalEntry>>() {
             @Override
             public void onResponse(Call<List<ApiService.JournalEntry>> call,
@@ -52,23 +52,12 @@ public class JournalRepository {
                         for (ApiService.JournalEntry e : entries) {
                             entities.add(new JournalEntryEntity(e.date, e.text, e.id, e.year));
                         }
-                        // For simplicity, we might want to clear entries for this date/year or just
-                        // insert.
-                        // Since 'date' is PK in our simplified Entity (wait, JournalEntryEntity has
-                        // date as PK?
-                        // That means 1 entry per day per user? Yes. But Timeline returns entries for
-                        // "Same Day, Different Years").
-                        // AH! JournalEntryEntity PK should probably be ID, not Date, if we store
-                        // multiple years.
-                        // Let's check JournalEntryEntity.
-                        // It defined @PrimaryKey public String date;
-                        // ERROR: If timeline returns 2023-12-12 and 2022-12-12, they have DIFFERENT
-                        // dates. So Date as PK is fine.
-                        // Wait, PK is unique constraint. date="2023-12-12" != "2022-12-12". So it
-                        // works.
-
                         db.journalDao().insertAll(entities);
                     });
+
+                    // PREFETCH NEXT/PREV DAYS silently
+                    prefetchNeighbors(date);
+
                 } else {
                     loadFromDb(date, callback);
                 }
@@ -81,36 +70,63 @@ public class JournalRepository {
         });
     }
 
-    private void loadFromDb(String date, DataCallback<List<ApiService.JournalEntry>> callback) {
-        // We want entries for this day/month across all years.
-        // Backend filters by "Month-Day".
-        // Our DAO 'getEntryByDate' is exact match.
-        // We need a DAO method to Get By Month/Day pattern or just getAll and filter in
-        // Java (easier for now).
-        // Or update DAO to use SQLite strftime (but Room supports it?).
-        // Let's just fetch all and filter in Java for simplicity in this artifact.
+    private void prefetchNeighbors(String currentDate) {
+        // currentDate is YYYY-MM-DD
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                java.time.LocalDate current = java.time.LocalDate.parse(currentDate);
+                prefetchDate(current.minusDays(1).toString());
+                prefetchDate(current.plusDays(1).toString());
+            }
+        } catch (Exception e) {
+            // Ignore prefetch errors
+        }
+    }
 
-        executor.execute(() -> {
-            List<JournalEntryEntity> all = db.journalDao().getAllEntries();
-            List<ApiService.JournalEntry> filtered = new ArrayList<>();
-            // Target format YYYY-MM-DD. We want to match -MM-DD.
-            // date input is YYYY-MM-DD.
-            String targetMonthDay = date.substring(4); // -12-12
-
-            for (JournalEntryEntity entity : all) {
-                if (entity.date != null && entity.date.endsWith(targetMonthDay)) {
-                    ApiService.JournalEntry dto = new ApiService.JournalEntry();
-                    dto.date = entity.date;
-                    dto.text = entity.text;
-                    dto.id = entity.id;
-                    dto.year = entity.year; // We stored year
-                    filtered.add(dto);
+    private void prefetchDate(String date) {
+        apiService.getTimeline(date).enqueue(new Callback<List<ApiService.JournalEntry>>() {
+            @Override
+            public void onResponse(Call<List<ApiService.JournalEntry>> call,
+                    Response<List<ApiService.JournalEntry>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    executor.execute(() -> {
+                        List<JournalEntryEntity> entities = new ArrayList<>();
+                        for (ApiService.JournalEntry e : response.body()) {
+                            entities.add(new JournalEntryEntity(e.date, e.text, e.id, e.year));
+                        }
+                        db.journalDao().insertAll(entities);
+                    });
                 }
             }
 
+            @Override
+            public void onFailure(Call<List<ApiService.JournalEntry>> call, Throwable t) {
+            }
+        });
+    }
+
+    private void loadFromDb(String date, DataCallback<List<ApiService.JournalEntry>> callback) {
+        // Optimised: Use SQLite LIKE query to filter by "-MM-DD"
+        executor.execute(() -> {
+            // date is YYYY-MM-DD. We want pattern %-MM-DD.
+            String targetMonthDay = date.substring(4); // -12-12
+            String pattern = "%" + targetMonthDay;
+
+            List<JournalEntryEntity> matches = db.journalDao().getEntriesByPattern(pattern);
+
+            List<ApiService.JournalEntry> dtos = new ArrayList<>();
+            for (JournalEntryEntity entity : matches) {
+                ApiService.JournalEntry dto = new ApiService.JournalEntry();
+                dto.date = entity.date;
+                dto.text = entity.text;
+                dto.id = entity.id;
+                dto.year = entity.year;
+                dtos.add(dto);
+            }
+
             mainHandler.post(() -> {
-                if (!filtered.isEmpty()) {
-                    callback.onSuccess(filtered);
+                if (!dtos.isEmpty()) {
+                    callback.onSuccess(dtos);
                 } else {
                     callback.onError("No offline data");
                 }

@@ -12,8 +12,11 @@ public interface JournalDao {
     @Query("SELECT * FROM entries WHERE date = :date")
     JournalEntryEntity getEntryByDate(String date);
 
-    @Query("SELECT * FROM entries")
+    @Query("SELECT * FROM journal_entries")
     List<JournalEntryEntity> getAllEntries();
+
+    @Query("SELECT * FROM journal_entries WHERE date LIKE :pattern")
+    List<JournalEntryEntity> getEntriesByPattern(String pattern);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<JournalEntryEntity> entries);
