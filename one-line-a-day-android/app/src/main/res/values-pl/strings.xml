@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Jedna Linijka Dziennie</string>
+    <string name="today_date_format">EEEE, d MMMM yyyy</string>
+    
+    <!-- UI Labels -->
+    <string name="hint_text">Twoja notatka na dziś...</string>
+    <string name="save_btn">Zapisz</string>
+    <string name="on_this_day">Tego dnia...</string>
+    <string name="prev_day_desc">Poprzedni dzień</string>
+    <string name="next_day_desc">Następny dzień</string>
+
+    <!-- Messages -->
+    <string name="saved_msg">Wspomnienie zapisane!</string>
+    <string name="empty_msg">Napisz coś najpierw!</string>
+    <string name="long_msg">Wpis jest za długi (max 500 znaków)</string>
+    <string name="error_save_msg">Nie udało się zapisać: %s</string>
+    <string name="network_error_msg">Błąd sieci: %s</string>
+    <string name="failed_load_msg">Nie udało się załadować osi czasu</string>
+
+    <!-- Auth -->
+    <string name="login_title">Logowanie</string>
+    <string name="register_title">Utwórz Konto</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Hasło</string>
+    <string name="display_name_hint">Nazwa Wyświetlana</string>
+    <string name="login_btn">Zaloguj się</string>
+    <string name="register_btn">Zarejestruj się</string>
+    <string name="go_to_register">Nie masz konta? Zarejestruj się</string>
+    <string name="fill_all_fields">Proszę wypełnić wszystkie pola</string>
+    <string name="login_failed">Logowanie nieudane</string>
+    <string name="register_success">Zarejestrowano! Zaloguj się</string>
+    <string name="register_failed">Rejestracja nieudana</string>
+</resources>

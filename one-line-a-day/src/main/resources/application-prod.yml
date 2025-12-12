@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    # In prod, usually supplied by Env Vars, but here we set defaults
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/onelineaday_prod}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:password}
+  jpa:
+    hibernate:
+      ddl-auto: validate # safer than update
+    show-sql: false # disable logging SQL
+logging:
+  level:
+    root: INFO
+    com.onelineaday: WARN # Reduce noise

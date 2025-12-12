@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Una Línea al Día</string>
+    <string name="today_date_format">EEEE, d 'de' MMMM 'de' yyyy</string>
+    
+    <!-- UI Labels -->
+    <string name="hint_text">Tu línea para hoy...</string>
+    <string name="save_btn">Guardar</string>
+    <string name="on_this_day">En este día...</string>
+    <string name="prev_day_desc">Día anterior</string>
+    <string name="next_day_desc">Día siguiente</string>
+
+    <!-- Messages -->
+    <string name="saved_msg">¡Recuerdo guardado!</string>
+    <string name="empty_msg">¡Escribe algo primero!</string>
+    <string name="long_msg">La entrada es demasiado larga (máx. 500 caracteres)</string>
+    <string name="error_save_msg">Error al guardar: %s</string>
+    <string name="network_error_msg">Error de red: %s</string>
+    <string name="failed_load_msg">Error al cargar la línea de tiempo</string>
+
+    <!-- Auth -->
+    <string name="login_title">Iniciar Sesión</string>
+    <string name="register_title">Crear Cuenta</string>
+    <string name="email_hint">Correo</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="display_name_hint">Nombre para mostrar</string>
+    <string name="login_btn">Entrar</string>
+    <string name="register_btn">Registrarse</string>
+    <string name="go_to_register">¿No tienes cuenta? Regístrate</string>
+    <string name="fill_all_fields">Por favor, rellena todos los campos</string>
+    <string name="login_failed">Error de inicio de sesión</string>
+    <string name="register_success">¡Registrado! Por favor inicia sesión</string>
+    <string name="register_failed">Error en el registro</string>
+</resources>

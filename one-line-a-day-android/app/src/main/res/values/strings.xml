@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">One Line a Day</string>
+    <string name="today_date_format">EEEE, MMMM d, yyyy</string>
+    
+    <!-- UI Labels -->
+    <string name="hint_text">Your line for today...</string>
+    <string name="save_btn">Save</string>
+    <string name="on_this_day">On this day...</string>
+    <string name="prev_day_desc">Previous Day</string>
+    <string name="next_day_desc">Next Day</string>
+
+    <!-- Messages -->
+    <string name="saved_msg">Memory saved!</string>
+    <string name="empty_msg">Please write something first!</string>
+    <string name="long_msg">Entry is too long (max 500 chars)</string>
+    <string name="error_save_msg">Failed to save: %s</string>
+    <string name="network_error_msg">Network error: %s</string>
+    <string name="failed_load_msg">Failed to load timeline</string>
+
+    <!-- Auth -->
+    <string name="login_title">Login</string>
+    <string name="register_title">Create Account</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="display_name_hint">Display Name</string>
+    <string name="login_btn">Login</string>
+    <string name="register_btn">Register</string>
+    <string name="go_to_register">Don\'t have an account? Register</string>
+    <string name="fill_all_fields">Please fill all fields</string>
+    <string name="login_failed">Login Failed</string>
+    <string name="register_success">Registered! Please Login</string>
+    <string name="register_failed">Registration Failed</string>
+</resources>
