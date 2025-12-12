@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Una Línea al Día</string>
-    <string name="today_date_format">EEEE, d 'de' MMMM 'de' yyyy</string>
+    <string name="today_date_format">EEEE, d \'de\' MMMM \'de\' yyyy</string>
     
     <!-- UI Labels -->
     <string name="hint_text">Tu línea para hoy...</string>
