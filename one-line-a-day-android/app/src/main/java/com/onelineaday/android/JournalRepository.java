@@ -36,6 +36,33 @@ public class JournalRepository {
         void onError(String message);
     }
 
+    public void saveEntry(String date, String text, DataCallback<ApiService.JournalEntry> callback) {
+        ApiService.EntryRequest request = new ApiService.EntryRequest(date, text);
+        apiService.saveEntry(request).enqueue(new Callback<ApiService.JournalEntry>() {
+            @Override
+            public void onResponse(Call<ApiService.JournalEntry> call, Response<ApiService.JournalEntry> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiService.JournalEntry entry = response.body();
+                    callback.onSuccess(entry);
+
+                    // Save to local DB
+                    executor.execute(() -> {
+                        JournalEntryEntity entity = new JournalEntryEntity(entry.date, entry.text, entry.id,
+                                entry.year);
+                        db.journalDao().insert(entity);
+                    });
+                } else {
+                    callback.onError("Failed to save entry: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiService.JournalEntry> call, Throwable t) {
+                callback.onError("Network error: " + t.getMessage());
+            }
+        });
+    }
+
     public void getTimeline(String date, DataCallback<List<ApiService.JournalEntry>> callback) {
         // Strategy: Network First -> Fallback to Local + Prefetch Neighbors
         apiService.getTimeline(date).enqueue(new Callback<List<ApiService.JournalEntry>>() {
