@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+# Security: Restrict GITHUB_TOKEN permissions
+permissions:
+  contents: read
+
 jobs:
   build-backend:
     runs-on: ubuntu-latest
@@ -13,9 +17,9 @@ jobs:
       run:
         working-directory: ./one-line-a-day
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -29,14 +33,14 @@ jobs:
       run:
         working-directory: ./one-line-a-day-android
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         gradle-version: '8.5'
         
