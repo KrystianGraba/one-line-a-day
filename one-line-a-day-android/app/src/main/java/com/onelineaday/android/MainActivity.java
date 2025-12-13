@@ -27,11 +27,14 @@ public class MainActivity extends AppCompatActivity {
     private TimelineAdapter adapter;
     private TextInputEditText etEntry;
     private LocalDate today = LocalDate.now();
+    private JournalRepository repository; // Added missing field
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        repository = new JournalRepository(this); // Initialize repository
 
         TextView tvDate = findViewById(R.id.tvDate);
         tvDate.setText("Today, " + today.format(DateTimeFormatter.ofPattern("MMMM d")));
@@ -83,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Navigation
-        // View btnPrev = findViewById(R.id.btnPrev); // Already defined as ImageButton
-        // View btnNext = findViewById(R.id.btnNext); // Already defined as ImageButton
+        View btnPrev = findViewById(R.id.btnPrev);
+        View btnNext = findViewById(R.id.btnNext);
 
         btnPrev.setOnClickListener(v -> updateDate(today.minusDays(1)));
         btnNext.setOnClickListener(v -> updateDate(today.plusDays(1)));
