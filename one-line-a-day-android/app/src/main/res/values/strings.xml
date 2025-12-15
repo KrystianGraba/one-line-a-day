@@ -31,6 +31,4 @@
     <string name="login_failed">Login Failed</string>
     <string name="register_success">Registered! Please Login</string>
     <string name="register_failed">Registration Failed</string>
-    <string name="register_failed2" translatable="false">Registration Failed2</string>
-
 </resources>
