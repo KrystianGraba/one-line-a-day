@@ -17,6 +17,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true # For existing DBs
+    validate-on-migrate: false # Bypass checksum validation for dev
 
 application:
   jwt:
