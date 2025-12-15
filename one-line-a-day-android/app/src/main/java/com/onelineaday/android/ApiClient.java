@@ -24,7 +24,7 @@ public class ApiClient {
             // Auth Interceptor
             httpClient.addInterceptor(chain -> {
                 Request original = chain.request();
-                SharedPreferences prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+                SharedPreferences prefs = SecurePrefs.get(context);
                 String token = prefs.getString("token", null);
 
                 Request.Builder requestBuilder = original.newBuilder();
