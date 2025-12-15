@@ -7,11 +7,40 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@lombok.RequiredArgsConstructor
 public class AnalyticsService {
 
-    public void trackEvent(String userId, String event, Map<String, Object> metadata) {
-        // In a real app, send to PostHog / Mixpanel / BigQuery
-        // Here we just log it as requested
-        log.info("ANALYTICS [{}]: User={} Meta={}", event, userId, metadata);
+    private final com.onelineaday.repository.AnalyticsEventRepository repository;
+    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+
+    public void trackEvent(String userIdStr, String event, Map<String, Object> metadata) {
+        // Log it as requested
+        log.info("ANALYTICS [{}]: User={} Meta={}", event, userIdStr, metadata);
+
+        try {
+            java.util.UUID userId = null;
+            if (userIdStr != null && !userIdStr.equals("anonymous")) {
+                try {
+                    userId = java.util.UUID.fromString(userIdStr);
+                } catch (IllegalArgumentException e) {
+                    // ignore invalid UUIDs
+                }
+            }
+
+            String metaJson = "{}";
+            if (metadata != null) {
+                metaJson = objectMapper.writeValueAsString(metadata);
+            }
+
+            com.onelineaday.model.AnalyticsEvent entity = com.onelineaday.model.AnalyticsEvent.builder()
+                    .event(event)
+                    .userId(userId)
+                    .metadata(metaJson)
+                    .build();
+
+            repository.save(entity);
+        } catch (Exception e) {
+            log.error("Failed to save analytics event", e);
+        }
     }
 }
